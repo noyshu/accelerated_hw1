@@ -18,7 +18,7 @@ typedef unsigned char uchar;
 } while (0)
 
 #define SQR(a) ((a) * (a))
-
+double atomicAdd(double* address, double val);
 double static inline get_time_msec(void) {
     struct timeval t;
     gettimeofday(&t, NULL);
@@ -169,8 +169,8 @@ int main() {
 
     return 0;
 }
-#if __CUDA_ARCH__ < 600
-__device__ double atomicAdd(double* address, double val)
+
+double atomicAdd(double* address, double val)
 {
     unsigned long long int* address_as_ull =
             (unsigned long long int*)address;
@@ -187,4 +187,3 @@ __device__ double atomicAdd(double* address, double val)
 
     return __longlong_as_double(old);
 }
-#endif
