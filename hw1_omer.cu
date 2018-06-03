@@ -89,8 +89,8 @@ __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance)
     __threadfence();
     int i = blockIdx.x;
     if (hist1[i] + hist2[i] != 0){
-        float temp = (float)((double)SQR(hist1[i] - hist2[i])) / (hist1[i] + hist2[i]);
-        atomicAdd((float)*distance,temp);
+        double temp = (double)((double)SQR(hist1[i] - hist2[i])) / (hist1[i] + hist2[i]);
+        atomicAdd(distance,temp);
     }
     __syncthreads();
   //  return distance; redundant?
