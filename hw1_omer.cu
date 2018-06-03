@@ -90,7 +90,7 @@ __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance)
     int i = blockIdx.x;
     if (hist1[i] + hist2[i] != 0){
         int temp = ((double)SQR(hist1[i] - hist2[i])) / (hist1[i] + hist2[i]);
-        atomicAdd(distance,temp);
+        atomicAdd((float)*distance,temp);
     }
     __syncthreads();
     return distance;
