@@ -34,11 +34,11 @@ void load_image_pairs(uchar *images1, uchar *images2) {
     }
 }
 
-__host__ __device__ bool is_in_image_bounds(int i, int j) {
+bool is_in_image_bounds(int i, int j) {
     return (i >= 0) && (i < IMG_DIMENSION) && (j >= 0) && (j < IMG_DIMENSION);
 }
 
-__host__ __device__ uchar local_binary_pattern(uchar *image, int i, int j) {
+uchar local_binary_pattern(uchar *image, int i, int j) {
     uchar center = image[i * IMG_DIMENSION + j];
     uchar pattern = 0;
     if (is_in_image_bounds(i - 1, j - 1)) pattern |= (image[(i - 1) * IMG_DIMENSION + (j - 1)] >= center) << 7;
@@ -75,6 +75,25 @@ double histogram_distance(int *h1, int *h2) {
 
 /* Your __device__ functions and __global__ kernels here */
 /* ... */
+//device
+__device__ bool is_in_image_bounds(int i, int j) {
+    return (i >= 0) && (i < IMG_DIMENSION) && (j >= 0) && (j < IMG_DIMENSION);
+}
+
+__device__ uchar local_binary_pattern(uchar *image, int i, int j) {
+    uchar center = image[i * IMG_DIMENSION + j];
+    uchar pattern = 0;
+    if (is_in_image_bounds(i - 1, j - 1)) pattern |= (image[(i - 1) * IMG_DIMENSION + (j - 1)] >= center) << 7;
+    if (is_in_image_bounds(i - 1, j    )) pattern |= (image[(i - 1) * IMG_DIMENSION + (j    )] >= center) << 6;
+    if (is_in_image_bounds(i - 1, j + 1)) pattern |= (image[(i - 1) * IMG_DIMENSION + (j + 1)] >= center) << 5;
+    if (is_in_image_bounds(i    , j + 1)) pattern |= (image[(i    ) * IMG_DIMENSION + (j + 1)] >= center) << 4;
+    if (is_in_image_bounds(i + 1, j + 1)) pattern |= (image[(i + 1) * IMG_DIMENSION + (j + 1)] >= center) << 3;
+    if (is_in_image_bounds(i + 1, j    )) pattern |= (image[(i + 1) * IMG_DIMENSION + (j    )] >= center) << 2;
+    if (is_in_image_bounds(i + 1, j - 1)) pattern |= (image[(i + 1) * IMG_DIMENSION + (j - 1)] >= center) << 1;
+    if (is_in_image_bounds(i    , j - 1)) pattern |= (image[(i    ) * IMG_DIMENSION + (j - 1)] >= center) << 0;
+    return pattern;
+}
+//global
 __global__ void image_to_hisogram_simple(uchar *image1, OUT int *hist1) {
     int i = blockIdx.x;
     int j = blockIdx.y;
