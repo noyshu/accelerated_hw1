@@ -34,7 +34,7 @@ void load_image_pairs(uchar *images1, uchar *images2) {
     }
 }
 
-bool is_in_image_bounds(int i, int j) {
+__host__ __device__ bool is_in_image_bounds(int i, int j) {
     return (i >= 0) && (i < IMG_DIMENSION) && (j >= 0) && (j < IMG_DIMENSION);
 }
 
