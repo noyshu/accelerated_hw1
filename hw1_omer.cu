@@ -18,7 +18,7 @@ typedef unsigned char uchar;
 } while (0)
 
 #define SQR(a) ((a) * (a))
-double atomicAdd(double* address, double val);
+
 double static inline get_time_msec(void) {
     struct timeval t;
     gettimeofday(&t, NULL);
@@ -90,7 +90,7 @@ __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance)
     int i = blockIdx.x;
     if (hist1[i] + hist2[i] != 0){
         double temp = (double)((double)SQR(hist1[i] - hist2[i])) / (hist1[i] + hist2[i]);
-        atomicAdd(distance,temp);
+        atomicAdd((float*)distance,(float)temp);
     }
     __syncthreads();
   //  return distance; redundant?
@@ -170,20 +170,3 @@ int main() {
     return 0;
 }
 
-double atomicAdd(double* address, double val)
-{
-    unsigned long long int* address_as_ull =
-            (unsigned long long int*)address;
-    unsigned long long int old = *address_as_ull, assumed;
-
-    do {
-        assumed = old;
-        old = atomicCAS(address_as_ull, assumed,
-                        __double_as_longlong(val +
-                                             __longlong_as_double(assumed)));
-
-        // Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
-    } while (assumed != old);
-
-    return __longlong_as_double(old);
-}
