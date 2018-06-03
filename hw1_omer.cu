@@ -38,7 +38,7 @@ bool is_in_image_bounds(int i, int j) {
     return (i >= 0) && (i < IMG_DIMENSION) && (j >= 0) && (j < IMG_DIMENSION);
 }
 
-uchar local_binary_pattern(uchar *image, int i, int j) {
+__host__ __device__ uchar local_binary_pattern(uchar *image, int i, int j) {
     uchar center = image[i * IMG_DIMENSION + j];
     uchar pattern = 0;
     if (is_in_image_bounds(i - 1, j - 1)) pattern |= (image[(i - 1) * IMG_DIMENSION + (j - 1)] >= center) << 7;
