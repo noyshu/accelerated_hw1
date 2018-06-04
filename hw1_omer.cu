@@ -166,7 +166,7 @@ int main() {
         int *gpu_hist1;
         int *gpu_hist2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist1,256*sizeof(int));
-        memset(hist1, 0, sizeof(int) * 256);
+        memset(gpu_hist1, 0, sizeof(int) * 256);
         cudaMalloc(&gpu_hist2,256*sizeof(int));
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist_distance,sizeof(double));
