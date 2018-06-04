@@ -139,7 +139,7 @@ int main() {
     printf("total time %f [msec]\n", t_finish - t_start);
 
     /* using GPU task-serial */
-    printf("\n=== GPU Task Serial ===\n");/*
+    printf("\n=== GPU Task Serial ===\n");
     do { *//* do {} while (0): to keep variables inside this block in their own scope. remove if you prefer otherwise *//*
         *//* Your Code Here *//*
         uchar *gpu_image1, *gpu_image2; // TODO: allocate with cudaMalloc
@@ -173,7 +173,7 @@ int main() {
         t_finish = get_time_msec();
         printf("average distance between images %f\n", total_distance / N_IMG_PAIRS);
         printf("total time %f [msec]\n", t_finish - t_start);
-    } while (0);*/
+    } while (0);
 
     /* using GPU task-serial + images and histograms in shared memory */
     printf("\n=== GPU Task Serial with shared memory ===\n");
