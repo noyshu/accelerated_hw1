@@ -52,6 +52,8 @@ __host__ __device__ uchar local_binary_pattern(uchar *image, int i, int j) {
     return pattern;
 }
 
+//__device__ void zero
+
 void image_to_histogram(uchar *image, int *histogram) {
     memset(histogram, 0, sizeof(int) * 256);
     for (int i = 0; i < IMG_DIMENSION; i++) {
@@ -166,7 +168,6 @@ int main() {
         int *gpu_hist1;
         int *gpu_hist2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist1,256*sizeof(int));
-        memset(gpu_hist1, 0, sizeof(int) * 256);
         cudaMalloc(&gpu_hist2,256*sizeof(int));
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist_distance,sizeof(double));
