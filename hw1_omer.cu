@@ -103,8 +103,8 @@ __global__ void image_to_hisogram_shared(uchar *image1, OUT int *hist1) {
     if (i*32+j <256){
         sharedHist[i*32+j] = 0;
     };
-    threadfence();
     im[i*32+j]=image1[i*32+j];
+    threadfence();
     uchar pattern = local_binary_pattern(im, i, j);
     atomicAdd(sharedHist+pattern,1);
     threadfence();
