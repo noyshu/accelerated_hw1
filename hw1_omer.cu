@@ -92,7 +92,7 @@ __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance)
         double temp = (double)((double)SQR(hist1[i] - hist2[i])) / (hist1[i] + hist2[i]);
         atomicAdd((float*)distance,(float)temp);
     }
-    __syncthreads();
+   // __syncthreads();
   //  return distance; redundant?
 }
 
