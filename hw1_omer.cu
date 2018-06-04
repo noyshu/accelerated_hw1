@@ -142,7 +142,7 @@ int main() {
             cudaMemcpy(gpu_image2, images2, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
 
             image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image1, gpu_hist1);
-            image_to_hisogram_simple<<<1, 1024>>>(gpu_image2, gpu_hist2);
+            image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image2, gpu_hist2);
             histogram_distance<<<1, 256>>>(gpu_hist1, gpu_hist2, gpu_hist_distance);
             //TODO: copy gpu_hist_distance to cpu_hist_distance 
             cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost);
