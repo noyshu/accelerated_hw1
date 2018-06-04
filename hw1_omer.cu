@@ -79,7 +79,7 @@ __global__ void image_to_hisogram_simple(uchar *image1, OUT int *hist1) {
     int i = blockIdx.x;
     int j = blockIdx.y;
     memset(hist1, 0, sizeof(int) * 256);
-    __threadfence();
+    //__threadfence();
     uchar pattern = local_binary_pattern(image1, i, j);
     atomicAdd(hist1+pattern,1);
    // __threadfence();
