@@ -82,7 +82,7 @@ __global__ void image_to_hisogram_simple(uchar *image1, OUT int *hist1) {
     __threadfence();
     uchar pattern = local_binary_pattern(image1, i, j);
     atomicAdd(hist1+pattern,1);
-    __threadfence();
+   // __threadfence();
 }
 __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance) {
     *distance=0;
