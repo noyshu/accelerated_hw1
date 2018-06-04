@@ -5,6 +5,7 @@
 
 #define IMG_DIMENSION 32
 #define N_IMG_PAIRS 10000
+#define IMAGE_SIZE 1024
 
 typedef unsigned char uchar;
 #define OUT
@@ -92,9 +93,26 @@ __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance)
         double temp = (double)((double)SQR(hist1[i] - hist2[i])) / (hist1[i] + hist2[i]);
         atomicAdd((float*)distance,(float)temp);
     }
-   // __syncthreads();
-  //  return distance; redundant?
 }
+
+__global__ void image_to_hisogram_shared(uchar *image1, OUT int *hist1) {
+    int i = blockIdx.x;
+    int j = blockIdx.y;
+    __shared__ uchar im[IMAGE_SIZE];
+    __shared__ int sharedHist[256];
+    if (i*32+j <256){
+        sharedHist[i*32+j] = 0;
+    };
+    threadfence();
+    im[i][j]=image[i][j];
+    uchar pattern = local_binary_pattern(im, i, j);
+    atomicAdd(sharedHist+pattern,1);
+    threadfence();
+    if (i*32+j <256){
+        hist1[i*32+j] = sharedHist[i*32+j];
+    };
+}
+
 
 int main() {
     uchar *images1; /* we concatenate all images in one huge array */
@@ -130,6 +148,8 @@ int main() {
         int *gpu_hist1, *gpu_hist2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist1,256*sizeof(int));
         cudaMalloc(&gpu_hist2,256*sizeof(int));
+        cudaMemset(&gpu_hist1,0,256*sizeof(int));
+        cudaMemset(&gpu_hist2,0,256*sizeof(int));
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist_distance,sizeof(double));
         double cpu_hist_distance;
@@ -167,8 +187,8 @@ int main() {
         int *gpu_hist2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist1,256*sizeof(int));
         cudaMalloc(&gpu_hist2,256*sizeof(int));
-        cudaMemset(&gpu_hist1,0,256*sizeof(int));
-        cudaMemset(&gpu_hist2,0,256*sizeof(int));
+        //cudaMemset(&gpu_hist1,0,256*sizeof(int));
+        //cudaMemset(&gpu_hist2,0,256*sizeof(int));
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist_distance,sizeof(double));
         double cpu_hist_distance;
@@ -180,8 +200,8 @@ int main() {
             cudaMemcpy(gpu_image1, images1, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
             cudaMemcpy(gpu_image2, images2, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
 
-            image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image1, gpu_hist1);
-            image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image2, gpu_hist2);
+            image_to_hisogram_shared<<<1, threadsPerBlock>>>(gpu_image1, gpu_hist1);
+            image_to_hisogram_shared<<<1, threadsPerBlock>>>(gpu_image2, gpu_hist2);
             //->move to global hiat
 
             histogram_distance<<<1, 256>>>(gpu_hist1, gpu_hist2, gpu_hist_distance);
