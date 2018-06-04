@@ -86,7 +86,7 @@ __global__ void image_to_hisogram_simple(uchar *image1, OUT int *hist1) {
 }
 __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance) {
     *distance=0;
-    __threadfence();
+    //__threadfence();
     int i = blockIdx.x;
     if (hist1[i] + hist2[i] != 0){
         double temp = (double)((double)SQR(hist1[i] - hist2[i])) / (hist1[i] + hist2[i]);
