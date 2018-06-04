@@ -80,8 +80,6 @@ double histogram_distance(int *h1, int *h2) {
 __global__ void image_to_hisogram_simple(uchar *image1, OUT int *hist1) {
     int i = blockIdx.x;
     int j = blockIdx.y;
-    //memset(hist1, 0, sizeof(int) * 256);
-    //__threadfence();
     uchar pattern = local_binary_pattern(image1, i, j);
     atomicAdd(hist1+pattern,1);
    // __threadfence();
@@ -161,7 +159,7 @@ int main() {
     printf("\n=== GPU Task Serial with shared memory ===\n");
     do { /* do {} while (0): to keep variables inside this block in their own scope. remove if you prefer otherwise */
         /* Your Code Here */
-         uchar *gpu_image1;
+        uchar *gpu_image1;
         uchar *gpu_image2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_image1,1024*sizeof(uchar));
         cudaMalloc(&gpu_image2,1024*sizeof(uchar));
@@ -169,6 +167,8 @@ int main() {
         int *gpu_hist2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist1,256*sizeof(int));
         cudaMalloc(&gpu_hist2,256*sizeof(int));
+        cudaMemset(&gpu_hist1,0,256*sizeof(int));
+        cudaMemset(&gpu_hist2,0,256*sizeof(int));
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist_distance,sizeof(double));
         double cpu_hist_distance;
