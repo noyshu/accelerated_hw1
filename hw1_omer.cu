@@ -140,11 +140,12 @@ int main() {
 
     /* using GPU task-serial */
     printf("\n=== GPU Task Serial ===\n");
-    do { *//* do {} while (0): to keep variables inside this block in their own scope. remove if you prefer otherwise *//*
-        *//* Your Code Here *//*
-        uchar *gpu_image1_, *gpu_image2_; // TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_image1_,1024*sizeof(uchar));
-        cudaMalloc(&gpu_image2_,1024*sizeof(uchar));
+    do {
+        //* do {} while (0): to keep variables inside this block in their own scope. remove if you prefer otherwise *//*
+        //* Your Code Here *//*
+        uchar *gpu_image1, *gpu_image2; // TODO: allocate with cudaMalloc
+        cudaMalloc(&gpu_image1,1024*sizeof(uchar));
+        cudaMalloc(&gpu_image2,1024*sizeof(uchar));
         int *gpu_hist1, *gpu_hist2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist1,256*sizeof(int));
         cudaMalloc(&gpu_hist2,256*sizeof(int));
@@ -158,11 +159,11 @@ int main() {
         for (int i = 0; i < N_IMG_PAIRS; i++) {
             dim3 threadsPerBlock(32,32);
             // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
-            cudaMemcpy(gpu_image1_, images1, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
-            cudaMemcpy(gpu_image2_, images2, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
+            cudaMemcpy(gpu_image1, images1, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
+            cudaMemcpy(gpu_image2, images2, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
 
-            image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image2_, gpu_hist2);
-            image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image1_, gpu_hist1);
+            image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image2, gpu_hist2);
+            image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image1, gpu_hist1);
             histogram_distance<<<1, 256>>>(gpu_hist1, gpu_hist2, gpu_hist_distance);
             //TODO: copy gpu_hist_distance to cpu_hist_distance 
             cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost);
