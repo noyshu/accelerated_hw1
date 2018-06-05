@@ -245,8 +245,6 @@ int main() {
         }
         CUDA_CHECK(cudaDeviceSynchronize());
         t_finish = get_time_msec();
-        printf("average distance between images %f\n", total_distance / N_IMG_PAIRS);
-        printf("total time %f [msec]\n", t_finish - t_start);
     } while (0);
     printf("average distance between images %f\n", total_distance / N_IMG_PAIRS);
     printf("total time %f [msec]\n", t_finish - t_start);
