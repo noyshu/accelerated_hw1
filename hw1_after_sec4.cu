@@ -188,6 +188,7 @@ int main() {
         double cpu_hist_distance;
 
         t_start = get_time_msec();
+        cudaProfilerStart();
         for (int i = 0; i < N_IMG_PAIRS; i++) {
             dim3 threadsPerBlock(32,32);
             // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
@@ -202,7 +203,7 @@ int main() {
             
             total_distance += cpu_hist_distance;
         }
-
+        cudaProfilerStop();
         CUDA_CHECK(cudaFree(gpu_hist1));
         CUDA_CHECK(cudaFree(gpu_hist2));
         CUDA_CHECK(cudaFree(gpu_image1));
@@ -210,6 +211,7 @@ int main() {
 
         CUDA_CHECK(cudaDeviceSynchronize());
         t_finish = get_time_msec();
+
         printf("average distance between images %f\n", total_distance / N_IMG_PAIRS);
         printf("total time %f [msec]\n", t_finish - t_start);
     } while (0);
