@@ -176,10 +176,10 @@ int main() {
         //* do {} while (0): to keep variables inside this block in their own scope. remove if you prefer otherwise *//*
         //* Your Code Here *//*
         uchar *gpu_image1, *gpu_image2; // TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_image1,1024*sizeof(uchar));
-        cudaMalloc(&gpu_image2,1024*sizeof(uchar));
+        CUDA_CHECK(cudaMalloc(&gpu_image1,1024*sizeof(uchar)));
+        CUDA_CHECK(cudaMalloc(&gpu_image2,1024*sizeof(uchar)));
         int *gpu_hist1, *gpu_hist2; // TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_hist1,256*sizeof(int));
+        CUDA_CHECK(cudaMalloc(&gpu_hist1,256*sizeof(int)));
         cudaMalloc(&gpu_hist2,256*sizeof(int));
         cudaMemset(&gpu_hist1,0,256*sizeof(int));
         cudaMemset(&gpu_hist2,0,256*sizeof(int));
