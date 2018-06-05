@@ -237,14 +237,9 @@ int main() {
 
         for (int i = 0; i < N_IMG_PAIRS; i++) {
             dim3 threadsPerBlock(32,32);
-            const void* im1ptr = images1+i*1024;
-            const void* im2ptr = images2+i*1024;
-            void* x =gpu_image1_shared+i*1024;
-            cudaMemcpyKind y = cudaMemcpyHostToDevice;
-            int z = 1024 * sizeof(uchar);
             // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
-            //CUDA_CHECK(cudaMemcpy(x, im1ptr, z, y));
-            CUDA_CHECK(cudaMemcpy(gpu_image2_shared+i*1024, im2ptr, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
+            CUDA_CHECK(cudaMemcpy(gpu_image1_shared, images1+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
+            CUDA_CHECK(cudaMemcpy(gpu_image2_shared, images2+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
 
             image_to_hisogram_shared<<<1, threadsPerBlock>>>(gpu_image1_shared, gpu_hist1);
             image_to_hisogram_shared<<<1, threadsPerBlock>>>(gpu_image2_shared, gpu_hist2);
