@@ -180,18 +180,18 @@ int main() {
         CUDA_CHECK(cudaMalloc(&gpu_image2,1024*sizeof(uchar)));
         int *gpu_hist1, *gpu_hist2; // TODO: allocate with cudaMalloc
         CUDA_CHECK(cudaMalloc(&gpu_hist1,256*sizeof(int)));
-        cudaMalloc(&gpu_hist2,256*sizeof(int));
-        cudaMemset(&gpu_hist1,0,256*sizeof(int));
-        cudaMemset(&gpu_hist2,0,256*sizeof(int));
+        CUDA_CHECK(cudaMalloc(&gpu_hist2,256*sizeof(int)));
+        CUDA_CHECK(cudaMemset(&gpu_hist1,0,256*sizeof(int)));
+        CUDA_CHECK(cudaMemset(&gpu_hist2,0,256*sizeof(int)));
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_hist_distance,sizeof(double));
+        CUDA_CHECK(cudaMalloc(&gpu_hist_distance,sizeof(double)));
         double cpu_hist_distance;
 
         t_start = get_time_msec();
         for (int i = 0; i < N_IMG_PAIRS; i++) {
             dim3 threadsPerBlock(32,32);
             // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
-            cudaMemcpy(gpu_image1, images1+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
+            CUDA_CHECK(cudaMemcpy(gpu_image1, images1+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
             cudaMemcpy(gpu_image2, images2+ i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
 
             image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image2, gpu_hist2);
