@@ -125,7 +125,7 @@ __global__ void image_to_hisogram_batched(uchar *images, OUT int *hist1) {
     syncthreads();
 }
 
-}
+
 __global__ void histogram_distance_batched(int *hist1, int *hist2, OUT double *distance) {
     *distance=0;
     //__threadfence();
@@ -182,8 +182,8 @@ int main() {
         for (int i = 0; i < N_IMG_PAIRS; i++) {
             dim3 threadsPerBlock(32,32);
             // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
-            cudaMemcpy(gpu_image1, images1, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
-            cudaMemcpy(gpu_image2, images2, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
+            cudaMemcpy(gpu_image1, images1+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
+            cudaMemcpy(gpu_image2, images2+ i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
 
             image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image2, gpu_hist2);
             image_to_hisogram_simple<<<1, threadsPerBlock>>>(gpu_image1, gpu_hist1);
@@ -243,7 +243,7 @@ int main() {
     printf("total time %f [msec]\n", t_finish - t_start);
 
     /* using GPU + batching */
-    printf("\n=== GPU Batching ===\n");
+   /* printf("\n=== GPU Batching ===\n");
     do {
         //* do {} while (0): to keep variables inside this block in their own scope. remove if you prefer otherwise *//*
         //* Your Code Here *//*
@@ -282,5 +282,6 @@ int main() {
     printf("total time %f [msec]\n", t_finish - t_start);
 
     return 0;
+
 }
 //bla
