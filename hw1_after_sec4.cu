@@ -135,14 +135,14 @@ __global__ void image_to_hisogram_batched(uchar *images, OUT int *hist1) {
 
 
 __global__ void histogram_distance_batched(int *hist1, int *hist2, OUT double *distance) {
-   /* *distance=0;
+    *distance=0;
     //__threadfence();
     int i = threadIdx.x;
     int k = blockIdx.x;
     if (hist1[256*k+i] + hist2[256*k+i] != 0){
         double temp = (double)((double)SQR(hist1[256*k+i] - hist2[256*k+i])) / (hist1[256*k+i] + hist2[256*k+i]);
         atomicAdd((float*)distance,(float)temp);
-    }*/
+    };
 
 }
 
