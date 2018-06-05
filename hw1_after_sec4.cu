@@ -203,10 +203,10 @@ int main() {
             total_distance += cpu_hist_distance;
         }
 
-        CUDA_CHECK(cudaFree(&gpu_hist1));
-        CUDA_CHECK(cudaFree(&gpu_hist2));
-        CUDA_CHECK(cudaFree(&gpu_image1));
-        CUDA_CHECK(cudaFree(&gpu_image2));
+        CUDA_CHECK(cudaFree(gpu_hist1));
+        CUDA_CHECK(cudaFree(gpu_hist2));
+        CUDA_CHECK(cudaFree(gpu_image1));
+        CUDA_CHECK(cudaFree(gpu_image2));
 
         CUDA_CHECK(cudaDeviceSynchronize());
         t_finish = get_time_msec();
@@ -253,10 +253,10 @@ int main() {
         }
 
         CUDA_CHECK(cudaDeviceSynchronize());
-        CUDA_CHECK(cudaFree(&gpu_hist1));
-        CUDA_CHECK(cudaFree(&gpu_hist2));
-        CUDA_CHECK(cudaFree(&gpu_image1));
-        CUDA_CHECK(cudaFree(&gpu_image2));
+        CUDA_CHECK(cudaFree(gpu_hist1));
+        CUDA_CHECK(cudaFree(gpu_hist2));
+        CUDA_CHECK(cudaFree(gpu_image1));
+        CUDA_CHECK(cudaFree(gpu_image2));
         t_finish = get_time_msec();
     } while (0);
     printf("average distance between images %f\n", total_distance / N_IMG_PAIRS);
@@ -290,10 +290,10 @@ int main() {
         cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost);
         total_distance += cpu_hist_distance;
         CUDA_CHECK(cudaDeviceSynchronize());
-        CUDA_CHECK(cudaFree(&gpu_hist1));
-        CUDA_CHECK(cudaFree(&gpu_hist2));
-        CUDA_CHECK(cudaFree(&gpu_image1));
-        CUDA_CHECK(cudaFree(&gpu_image2));
+        CUDA_CHECK(cudaFree(gpu_hist1));
+        CUDA_CHECK(cudaFree(gpu_hist2));
+        CUDA_CHECK(cudaFree(gpu_image1));
+        CUDA_CHECK(cudaFree(gpu_image2));
         t_finish = get_time_msec();
     } while (0);
 
