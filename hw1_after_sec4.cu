@@ -220,16 +220,16 @@ int main() {
         /* Your Code Here */
         uchar *gpu_image1_shared;
         uchar *gpu_image2_shared; // TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_image1_shared,1024*sizeof(uchar));
-        cudaMalloc(&gpu_image2_shared,1024*sizeof(uchar));
+        CUDA_CHECK(cudaMalloc(&gpu_image1_shared,1024*sizeof(uchar)));
+        CUDA_CHECK(cudaMalloc(&gpu_image2_shared,1024*sizeof(uchar)));
         int *gpu_hist1;
         int *gpu_hist2; // TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_hist1,256*sizeof(int));
-        cudaMalloc(&gpu_hist2,256*sizeof(int));
+        CUDA_CHECK(cudaMalloc(&gpu_hist1,256*sizeof(int)));
+        CUDA_CHECK(cudaMalloc(&gpu_hist2,256*sizeof(int)));
         //cudaMemset(&gpu_hist1,0,256*sizeof(int));
         //cudaMemset(&gpu_hist2,0,256*sizeof(int));
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_hist_distance,sizeof(double));
+        CUDA_CHECK(cudaMalloc(&gpu_hist_distance,sizeof(double)));
         double cpu_hist_distance;
 
         t_start = get_time_msec();
@@ -247,7 +247,7 @@ int main() {
 
             histogram_distance<<<1, 256>>>(gpu_hist1, gpu_hist2, gpu_hist_distance);
             //TODO: copy gpu_hist_distance to cpu_hist_distance
-            cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost);
+            CUDA_CHECK(cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost));
 
             total_distance += cpu_hist_distance;
         }
@@ -268,26 +268,26 @@ int main() {
         //* do {} while (0): to keep variables inside this block in their own scope. remove if you prefer otherwise *//*
         //* Your Code Here *//*
         uchar *gpu_image1, *gpu_image2; // TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_image1,N_IMG_PAIRS*1024*sizeof(uchar));
-        cudaMalloc(&gpu_image2,N_IMG_PAIRS*1024*sizeof(uchar));
+        CUDA_CHECK(cudaMalloc(&gpu_image1,N_IMG_PAIRS*1024*sizeof(uchar)));
+        CUDA_CHECK(cudaMalloc(&gpu_image2,N_IMG_PAIRS*1024*sizeof(uchar)));
         int *gpu_hist1, *gpu_hist2; // TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_hist1,N_IMG_PAIRS*256*sizeof(int));
-        cudaMalloc(&gpu_hist2,N_IMG_PAIRS*256*sizeof(int));
-        cudaMemset(&gpu_hist1,0,N_IMG_PAIRS*256*sizeof(int));
-        cudaMemset(&gpu_hist2,0,N_IMG_PAIRS*256*sizeof(int));
+        CUDA_CHECK(cudaMalloc(&gpu_hist1,N_IMG_PAIRS*256*sizeof(int)));
+        CUDA_CHECK(cudaMalloc(&gpu_hist2,N_IMG_PAIRS*256*sizeof(int)));
+        CUDA_CHECK(cudaMemset(&gpu_hist1,0,N_IMG_PAIRS*256*sizeof(int)));
+        CUDA_CHECK(cudaMemset(&gpu_hist2,0,N_IMG_PAIRS*256*sizeof(int)));
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
-        cudaMalloc(&gpu_hist_distance,sizeof(double));
+        CUDA_CHECK(cudaMalloc(&gpu_hist_distance,sizeof(double)));
         double cpu_hist_distance;
         t_start = get_time_msec();
         dim3 threadsPerBlock(32,32);
         // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
-        cudaMemcpy(gpu_image1, images1, 1024 *N_IMG_PAIRS* sizeof(uchar), cudaMemcpyHostToDevice);
-        cudaMemcpy(gpu_image2, images2, 1024 *N_IMG_PAIRS* sizeof(uchar), cudaMemcpyHostToDevice);
+        CUDA_CHECK(cudaMemcpy(gpu_image1, images1, 1024 *N_IMG_PAIRS* sizeof(uchar), cudaMemcpyHostToDevice));
+        CUDA_CHECK(cudaMemcpy(gpu_image2, images2, 1024 *N_IMG_PAIRS* sizeof(uchar), cudaMemcpyHostToDevice));
         image_to_hisogram_batched<<<N_IMG_PAIRS, threadsPerBlock>>>(gpu_image2, gpu_hist2);
         image_to_hisogram_batched<<<N_IMG_PAIRS, threadsPerBlock>>>(gpu_image1, gpu_hist1);
         histogram_distance_batched<<<N_IMG_PAIRS, 256>>>(gpu_hist1, gpu_hist2, gpu_hist_distance);
         //TODO: copy gpu_hist_distance to cpu_hist_distance
-        cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost);
+        CUDA_CHECK(cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost));
         total_distance += cpu_hist_distance;
         CUDA_CHECK(cudaDeviceSynchronize());
         CUDA_CHECK(cudaFree(gpu_hist1));
