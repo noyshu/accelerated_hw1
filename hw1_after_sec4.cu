@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <sys/time.h>
-
+#include <cuda_profiler_api.h>
 #define IMG_DIMENSION 32
 #define N_IMG_PAIRS 10000
 #define IMAGE_SIZE 1024
