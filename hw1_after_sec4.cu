@@ -242,7 +242,7 @@ int main() {
 
             // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
             CUDA_CHECK(cudaMemcpy(gpu_image1+i*1024, im1ptr, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
-            CUDA_CHECK(cudaMemcpy(gpu_image2+i*1024, im2ptr, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
+       //     CUDA_CHECK(cudaMemcpy(gpu_image2+i*1024, im2ptr, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
 
             image_to_hisogram_shared<<<1, threadsPerBlock>>>(gpu_image1, gpu_hist1);
             image_to_hisogram_shared<<<1, threadsPerBlock>>>(gpu_image2, gpu_hist2);
