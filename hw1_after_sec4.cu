@@ -115,7 +115,7 @@ __global__ void image_to_hisogram_shared(uchar *image1, OUT int *hist1) {
 
 
 __global__ void image_to_hisogram_batched(uchar *images, OUT int *hist1) {
-    int i = threadIdx.x;
+    /*int i = threadIdx.x;
     int j = threadIdx.y;
     int k = blockIdx.x;
     __shared__ uchar im[IMAGE_SIZE];
@@ -130,20 +130,20 @@ __global__ void image_to_hisogram_batched(uchar *images, OUT int *hist1) {
     if (i*32+j <256){
         hist1[k*256+i*32+j] = sharedHist[i*32+j];
     };
-    syncthreads();
+    syncthreads();*/
 }
 
 
 __global__ void histogram_distance_batched(int *hist1, int *hist2, OUT double *distance) {
-    /**distance=0;
+   /* *distance=0;
     //__threadfence();
     int i = threadIdx.x;
     int k = blockIdx.x;
     if (hist1[256*k+i] + hist2[256*k+i] != 0){
         double temp = (double)((double)SQR(hist1[256*k+i] - hist2[256*k+i])) / (hist1[256*k+i] + hist2[256*k+i]);
         atomicAdd((float*)distance,(float)temp);
-    }
-     */
+    }*/
+
 }
 
 int main() {
