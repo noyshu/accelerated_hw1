@@ -256,42 +256,30 @@ int main() {
     do {
         //* do {} while (0): to keep variables inside this block in their own scope. remove if you prefer otherwise *//*
         //* Your Code Here *//*
-        printf("1\n");
         uchar *gpu_image1, *gpu_image2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_image1,N_IMG_PAIRS*1024*sizeof(uchar));
         cudaMalloc(&gpu_image2,N_IMG_PAIRS*1024*sizeof(uchar));
-        printf("2\n");
         int *gpu_hist1, *gpu_hist2; // TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist1,N_IMG_PAIRS*256*sizeof(int));
         cudaMalloc(&gpu_hist2,N_IMG_PAIRS*256*sizeof(int));
-        printf("3\n");
         cudaMemset(&gpu_hist1,0,N_IMG_PAIRS*256*sizeof(int));
         cudaMemset(&gpu_hist2,0,N_IMG_PAIRS*256*sizeof(int));
-        printf("4\n");
         double *gpu_hist_distance; //TODO: allocate with cudaMalloc
         cudaMalloc(&gpu_hist_distance,sizeof(double));
-        printf("5\n");
         double cpu_hist_distance;
         t_start = get_time_msec();
         dim3 threadsPerBlock(32,32);
         // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
         cudaMemcpy(gpu_image1, images1, 1024 *N_IMG_PAIRS* sizeof(uchar), cudaMemcpyHostToDevice);
         cudaMemcpy(gpu_image2, images2, 1024 *N_IMG_PAIRS* sizeof(uchar), cudaMemcpyHostToDevice);
-        printf("6\n");
         image_to_hisogram_batched<<<N_IMG_PAIRS, threadsPerBlock>>>(gpu_image2, gpu_hist2);
-        printf("7\n");
         image_to_hisogram_batched<<<N_IMG_PAIRS, threadsPerBlock>>>(gpu_image1, gpu_hist1);
-        printf("8\n");
         histogram_distance_batched<<<N_IMG_PAIRS, 256>>>(gpu_hist1, gpu_hist2, gpu_hist_distance);
-        printf("9\n");
         //TODO: copy gpu_hist_distance to cpu_hist_distance
         cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost);
-        printf("10\n");
         total_distance += cpu_hist_distance;
         CUDA_CHECK(cudaDeviceSynchronize());
         t_finish = get_time_msec();
-        printf("average distance between images %f\n", total_distance / N_IMG_PAIRS);
-        printf("total time %f [msec]\n", t_finish - t_start);
     } while (0);
 
     /* Your Code Here */
