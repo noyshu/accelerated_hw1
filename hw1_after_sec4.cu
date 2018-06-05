@@ -79,8 +79,8 @@ double histogram_distance(int *h1, int *h2) {
 /* Your __device__ functions and __global__ kernels here */
 /* ... */
 __global__ void image_to_hisogram_simple(uchar *image1, OUT int *hist1) {
-    int i = blockIdx.x;
-    int j = blockIdx.y;
+    int i = threadIdx.x;
+    int j = threadIdx.y;
     uchar pattern = local_binary_pattern(image1, i, j);
     atomicAdd(hist1+pattern,1);
    // __threadfence();
@@ -88,7 +88,7 @@ __global__ void image_to_hisogram_simple(uchar *image1, OUT int *hist1) {
 __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance) {
     *distance=0;
     //__threadfence();
-    int i = blockIdx.x;
+    int i = threadIdx.x;
     if (hist1[i] + hist2[i] != 0){
         double temp = (double)((double)SQR(hist1[i] - hist2[i])) / (hist1[i] + hist2[i]);
         atomicAdd((float*)distance,(float)temp);
@@ -96,8 +96,8 @@ __global__ void histogram_distance(int *hist1, int *hist2, OUT double *distance)
 }
 
 __global__ void image_to_hisogram_shared(uchar *image1, OUT int *hist1) {
-    int i = blockIdx.x;
-    int j = blockIdx.y;
+    int i = threadIdx.x;
+    int j = threadIdx.y;
     __shared__ uchar im[IMAGE_SIZE];
     __shared__ int sharedHist[256];
     if (i*32+j <256){
