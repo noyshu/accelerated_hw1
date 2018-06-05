@@ -202,6 +202,12 @@ int main() {
             
             total_distance += cpu_hist_distance;
         }
+
+        CUDA_CHECK(cudaFree(&gpu_hist1));
+        CUDA_CHECK(cudaFree(&gpu_hist2));
+        CUDA_CHECK(cudaFree(&gpu_image1));
+        CUDA_CHECK(cudaFree(&gpu_image2));
+
         CUDA_CHECK(cudaDeviceSynchronize());
         t_finish = get_time_msec();
         printf("average distance between images %f\n", total_distance / N_IMG_PAIRS);
@@ -228,12 +234,12 @@ int main() {
 
         t_start = get_time_msec();
 
-        cudaProfilerStart();
+
         for (int i = 0; i < N_IMG_PAIRS; i++) {
             dim3 threadsPerBlock(32,32);
             // TODO: copy relevant images from images1 and images2 to gpu_image1 and gpu_image2
-            cudaMemcpy(gpu_image1+i*1024, images1+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
-            cudaMemcpy(gpu_image2+i*1024, images2+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice);
+            CUDA_CHECK(cudaMemcpy(gpu_image1+i*1024, images1+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
+            CUDA_CHECK(cudaMemcpy(gpu_image2+i*1024, images2+i*1024, 1024 * sizeof(uchar), cudaMemcpyHostToDevice));
 
             image_to_hisogram_shared<<<1, threadsPerBlock>>>(gpu_image1, gpu_hist1);
             image_to_hisogram_shared<<<1, threadsPerBlock>>>(gpu_image2, gpu_hist2);
@@ -245,8 +251,12 @@ int main() {
 
             total_distance += cpu_hist_distance;
         }
-        cudaProfilerStop();
+
         CUDA_CHECK(cudaDeviceSynchronize());
+        CUDA_CHECK(cudaFree(&gpu_hist1));
+        CUDA_CHECK(cudaFree(&gpu_hist2));
+        CUDA_CHECK(cudaFree(&gpu_image1));
+        CUDA_CHECK(cudaFree(&gpu_image2));
         t_finish = get_time_msec();
     } while (0);
     printf("average distance between images %f\n", total_distance / N_IMG_PAIRS);
@@ -280,6 +290,10 @@ int main() {
         cudaMemcpy(&cpu_hist_distance, gpu_hist_distance, sizeof(double), cudaMemcpyDeviceToHost);
         total_distance += cpu_hist_distance;
         CUDA_CHECK(cudaDeviceSynchronize());
+        CUDA_CHECK(cudaFree(&gpu_hist1));
+        CUDA_CHECK(cudaFree(&gpu_hist2));
+        CUDA_CHECK(cudaFree(&gpu_image1));
+        CUDA_CHECK(cudaFree(&gpu_image2));
         t_finish = get_time_msec();
     } while (0);
 
