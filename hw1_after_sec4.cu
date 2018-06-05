@@ -119,9 +119,17 @@ __global__ void image_to_hisogram_batched(uchar *images, OUT int *hist1) {
     int j = threadIdx.y;
     int k = blockIdx.x;
     __shared__ uchar im[IMAGE_SIZE];
+    im[j+32*i] = images[k*IMAGE_SIZE+j+32*i];
     __shared__ int sharedHist[256];
+    if (i*32+j <256){
+        sharedHist[i*32+j] = 0;
+    };
+    threadfence();
     uchar pattern = local_binary_pattern(im+k*1024, i, j);
-    atomicAdd(sharedHist+k*256+pattern,1);
+    atomicAdd(sharedHist+pattern,1);
+    if (i*32+j <256){
+        hist1[k*256+i*32+j] = sharedHist[i*32+j];
+    };
     syncthreads();
 }
 
